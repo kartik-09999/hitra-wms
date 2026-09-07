@@ -1,0 +1,3150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HITRA WMS</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#eef9ff;color:#17384b}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.hidden{display:none!important}.btn{border:0;border-radius:9px;padding:10px 15px;background:#078bd0;color:#fff;font-weight:700}
+.btn-secondary{background:#e8f6fc;color:#11698e}.btn-green{background:#20a878}.btn-red{background:#e65b68}
+.btn-small{padding:7px 10px;font-size:12px}
+label{display:block;font-size:13px;font-weight:700;margin:10px 0 5px}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid #b9dcea;border-radius:9px;background:#fbfeff;color:#17384b;outline:none}
+input:focus,select:focus,textarea:focus{border-color:#078bd0}
+.login-error{min-height:20px;margin-top:10px;text-align:center;color:#d33}
+#loginPage{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#fff,#dff5ff);position:relative;overflow:hidden}
+.login-card{width:410px;max-width:92%;padding:30px;background:#fff;border:1px solid #c8e7f5;border-radius:22px;position:relative;z-index:5;box-shadow:0 20px 60px rgba(35,140,190,.18)}
+.logo{text-align:center;color:#087fbe;font-size:40px;font-weight:900;letter-spacing:4px}.logo-sub{text-align:center;color:#7190a0;margin:5px 0 25px}
+.login-btn{width:100%;margin-top:18px}.admin-button{position:absolute;right:20px;top:20px;z-index:20}
+.world{position:absolute;width:650px;height:650px;border:1px solid #9bdcff;border-radius:50%;opacity:.45;animation:spin 30s linear infinite}
+.world:before,.world:after{content:"";position:absolute;border:1px dashed #83c9ea;border-radius:50%}.world:before{inset:80px}.world:after{inset:160px}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}.truck{position:absolute;bottom:10%;left:-100px;font-size:45px;animation:truckMove 16s linear infinite}
+@keyframes truckMove{from{left:-100px}to{left:110%}}
+.navbar{height:64px;background:#fff;border-bottom:1px solid #d0eaf5;display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:30;box-shadow:0 3px 15px rgba(30,130,170,.08)}
+.brand{color:#0785ca;font-size:22px;font-weight:900}.user-area{display:flex;align-items:center;gap:10px}
+.container{max-width:1500px;margin:auto;padding:20px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.tab{padding:11px 16px;border-radius:10px;border:1px solid #c6e3f0;background:#fff;color:#27627c;font-weight:700}.tab.active{background:#078bd0;color:#fff}
+.section{display:none}.section.active{display:block}.card{background:#fff;border:1px solid #d0eaf5;border-radius:16px;padding:18px;margin-bottom:18px;box-shadow:0 6px 25px rgba(40,130,170,.07)}
+.filter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.notice{background:#fff8d9;border:1px solid #f2df8b;padding:12px;border-radius:10px;margin-bottom:15px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px}.kpi{background:linear-gradient(135deg,#fff,#eaf8ff);border:1px solid #cde9f5;border-radius:15px;padding:17px}
+.kpi-title{color:#64879a;font-size:13px}.kpi-value{display:block;margin-top:8px;font-size:27px;color:#0785ca;font-weight:700}
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.chart{min-height:250px}.bar-row{display:flex;align-items:center;gap:8px;margin:10px 0}
+.bar-label{width:125px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bar-bg{flex:1;height:22px;background:#e8f5fa;border-radius:6px;overflow:hidden}.bar-fill{height:100%;background:#48addc;border-radius:6px}.bar-num{width:45px;font-size:12px}
+.table-wrap{width:100%;overflow:auto}table{width:100%;min-width:1000px;border-collapse:collapse;font-size:12px}th,td{padding:9px;border-bottom:1px solid #dcecf3;text-align:left}
+th{background:#e8f6fc;color:#245e78;position:sticky;top:0;z-index:2}.status{padding:5px 8px;border-radius:8px;font-weight:700;font-size:11px}
+.status-pending{background:#fff0bd;color:#806400}.status-running{background:#d8efff;color:#0874a9}.status-complete{background:#d9f6e9;color:#16815d}
+.master-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}.master-box{background:#f6fcff;border:1px solid #d2ebf5;border-radius:12px;padding:15px}
+.master-list{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}.master-tag{background:#fff;border:1px solid #c9e5f1;padding:7px 9px;border-radius:8px;font-size:12px;display:flex;align-items:center;gap:6px}
+.master-delete{border:0;background:#e65b68;color:#fff;border-radius:5px;padding:3px 6px;font-size:10px}
+.modal{position:fixed;inset:0;background:rgba(10,45,60,.55);display:none;align-items:center;justify-content:center;z-index:100}.modal.show{display:flex}.modal-box{width:410px;max-width:94%;background:#fff;padding:25px;border-radius:18px}
+.wms-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}.wms-card{background:linear-gradient(135deg,#fff,#eefaff);border:1px solid #cfe9f5;border-radius:14px;padding:18px}.wms-number{color:#087fc1;font-size:28px;font-weight:700;margin-top:8px}
+.salary-scroll{overflow:auto}.salary-table{min-width:1600px}.salary-search{max-width:350px}.att{border:0;border-radius:5px;padding:4px 6px;color:#fff;font-size:9px;font-weight:700;margin:1px}
+.att-p{background:#20a878}.att-a{background:#e65b68}.att-l{background:#258bd0}.att-h{background:#f0c419;color:#513f00}
+.cell-p{background:#d9f6e9!important}.cell-a{background:#ffe0e3!important}.cell-l{background:#dceeff!important}.cell-h{background:#fff4b8!important}
+.month-title{font-size:18px;font-weight:700;color:#087fbe;margin:10px 0}
+.summary-card{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}.summary-mini{background:#f6fcff;border:1px solid #d2ebf5;border-radius:10px;padding:12px}
+@media(max-width:900px){.form-grid{grid-template-columns:1fr 1fr}.chart-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}.master-grid{grid-template-columns:1fr}.navbar{padding:0 12px}.brand{font-size:18px}.container{padding:12px}}
+</style>
+
+<!-- ==================== FIREBASE CLOUD ==================== -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage-compat.js"></script>
+<style>
+#cloudStatus{
+ position:fixed;right:14px;bottom:14px;z-index:9999;
+ padding:8px 12px;border-radius:999px;background:#fff;
+ border:1px solid #cfe7f3;box-shadow:0 4px 16px rgba(20,100,140,.12);
+ font-size:12px;font-weight:700;color:#64879a
+}
+#cloudStatus.online{color:#16815d}
+#cloudStatus.offline{color:#d33}
+.cloud-upload{margin-top:15px;padding:15px;background:#f6fcff;border:1px solid #d2ebf5;border-radius:12px}
+</style>
+
+</head>
+<body>
+<div id="cloudStatus">☁ Cloud: Connecting...</div>
+
+<!-- ==================== SLIDE 1 ==================== -->
+<div id="loginPage">
+<button class="btn btn-secondary admin-button" onclick="openAdminModal()">⚙ Admin</button>
+<div class="world"></div><div class="truck">🚚</div>
+<div class="login-card">
+<div class="logo">HITRA</div>
+<div class="logo-sub">Warehouse Management System</div>
+<label>Login ID</label><input id="loginId" autocomplete="username" placeholder="Enter Login ID">
+<label>Password</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Enter Password">
+<label>Post / Role</label>
+<select id="loginRole"><option value="office">Office</option><option value="warehouse">Warehouse</option><option value="wms">WMS</option></select>
+<button class="btn login-btn" onclick="login()">LOGIN</button>
+<div id="loginError" class="login-error"></div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 2 ==================== -->
+<div id="officePage" class="hidden">
+<nav class="navbar">
+<div class="brand">HITRA WMS</div>
+<div class="user-area"><span id="officeUser"></span><button class="btn btn-secondary btn-small" onclick="logout()">Logout</button></div>
+</nav>
+<div class="container">
+<div class="tabs">
+<button class="tab active" onclick="officeTab('officeDashboard',this)">📊 Dashboard</button>
+<button class="tab" onclick="officeTab('officeEntry',this)">📝 Data Entry</button>
+<button class="tab" onclick="officeTab('officeMasters',this)">⚙ Masters</button>
+</div>
+
+<section id="officeDashboard" class="section active">
+<div class="card"><h2>Dashboard</h2>
+<div class="filter-grid">
+<div><label>Date From</label><input id="filterFrom" type="date" onchange="renderOffice()"></div>
+<div><label>Date To</label><input id="filterTo" type="date" onchange="renderOffice()"></div>
+<div><label>Customer</label><select id="filterCustomer" onchange="renderOffice()"></select></div>
+<div><label>Status</label><select id="filterStatus" onchange="renderOffice()"><option value="">All</option><option>Pending</option><option>Running</option><option>Complete</option></select></div>
+<div><label>UOM</label><select id="filterUOM" onchange="renderOffice()"></select></div>
+<div><label>DG / Non DG</label><select id="filterDG" onchange="renderOffice()"><option value="">All</option><option>DG</option><option>Non DG</option></select></div>
+<div><label>DG Class</label><select id="filterDGClass" onchange="renderOffice()"></select></div>
+<div><label>CSR</label><select id="filterCSR" onchange="renderOffice()"></select></div>
+<div><label>Dock / Zone</label><select id="filterDock" onchange="renderOffice()"></select></div>
+<div><label>Vehicle Number</label><select id="filterVehicleNumber" onchange="renderOffice()"></select></div>
+</div></div>
+
+<div class="kpi-grid">
+<div class="kpi"><div class="kpi-title">Total Customer</div><span id="kCustomer" class="kpi-value">0</span></div>
+<div class="kpi"><div class="kpi-title">Total Quantity</div><span id="kQty" class="kpi-value">0</span></div>
+<div class="kpi"><div class="kpi-title">Inbound</div><span id="kInbound" class="kpi-value">0</span></div>
+<div class="kpi"><div class="kpi-title">Outbound</div><span id="kOutbound" class="kpi-value">0</span></div>
+<div class="kpi"><div class="kpi-title">Avg Loading Hours</div><span id="kLoading" class="kpi-value">0</span></div>
+<div class="kpi"><div class="kpi-title">Avg Offloading Hours</div><span id="kOffloading" class="kpi-value">0</span></div>
+<div class="kpi"><div class="kpi-title">Vehicle Number</div><span id="kVehicle" class="kpi-value">0</span></div>
+</div>
+
+<div class="chart-grid">
+<div class="card chart"><h3>DG vs Non DG</h3><div id="officeChartDG"></div></div>
+<div class="card chart"><h3>Dock / Zone vs Quantity</h3><div id="officeChartDock"></div></div>
+<div class="card chart"><h3>Customer vs CSR</h3><div id="officeChartCustomer"></div></div>
+<div class="card chart"><h3>Inbound vs Outbound</h3><div id="officeChartType"></div></div>
+</div>
+
+<div class="card"><h3>Day-to-Day Data</h3>
+<button class="btn btn-green btn-small" onclick="exportOffice()">⬇ Export Excel</button>
+<div class="table-wrap" style="margin-top:12px"><table><thead id="officeTableHead"></thead><tbody id="officeTableBody"></tbody></table></div>
+</div>
+</section>
+
+<section id="officeEntry" class="section">
+<div class="card"><h2>Office Data Entry</h2><div class="notice"><b>Save</b> keeps entry. <b>Post</b> sends entry to Warehouse.</div>
+<div class="form-grid">
+<div><label>Customer</label><select id="entryCustomer"></select></div>
+<div><label>Type</label><select id="entryType"><option>Inbound</option><option>Outbound</option></select></div>
+<div><label>QTY</label><input id="entryQty" type="number" min="0"></div>
+<div><label>UOM</label><select id="entryUOM"></select></div>
+<div><label>Type Of Vehicle</label><select id="entryVehicle"></select></div>
+<div><label>Vehicle Number</label><input id="entryVehicleNumber"></div>
+<div><label>Status</label><select id="entryStatus"><option>Pending</option><option>Running</option><option>Complete</option></select></div>
+<div><label>Requested Time Slot</label><input id="entryRequested" type="datetime-local"></div>
+<div><label>Approved Time Slot</label><input id="entryApproved" type="datetime-local"></div>
+<div><label>Labelling Status</label><select id="entryLabelling"><option>Planned</option><option>Pending</option><option>Complete</option></select></div>
+<div><label>Customs Clearance</label><select id="entryCustoms"><option>Yes</option><option>No</option><option>0</option></select></div>
+<div><label>Transportation</label><select id="entryTransportation"><option>Yes</option><option>No</option></select></div>
+<div><label>VAS Activity</label><select id="entryVAS"></select></div>
+<div><label>CSR Name</label><select id="entryCSR"></select></div>
+<div><label>Dock / Zone</label><select id="entryDock"></select></div>
+<div><label>DG / Non DG</label><select id="entryDG"><option>Non DG</option><option>DG</option></select></div>
+<div><label>DG Class</label><select id="entryDGClass"></select></div>
+<div><label>Overtime</label><select id="entryOvertime"><option>No</option><option>Yes</option></select></div>
+<div><label>Overtime Hours</label><input id="entryOvertimeHours" type="number" min="0" step=".5"></div>
+</div>
+<div class="form-actions">
+<button class="btn btn-secondary" onclick="saveOfficeEntry('Saved')">💾 Save</button>
+<button class="btn btn-green" onclick="saveOfficeEntry('Posted')">📤 Post</button>
+<button class="btn btn-secondary" onclick="clearOfficeEntry()">Clear</button>
+</div>
+<div id="editingId" class="hidden"></div>
+</div>
+</section>
+
+<section id="officeMasters" class="section">
+<div class="card"><h2>Master Making</h2>
+<div class="form-grid">
+<div><label>Customer Name</label><input id="masterCustomer"></div>
+<div><label>Phone No</label><input id="masterPhone"></div>
+<div><label>E-mail</label><input id="masterEmail"></div>
+<div><label>Vehicle Name</label><input id="masterVehicle"></div>
+<div><label>UOM Name</label><input id="masterUOM"></div>
+<div><label>Status Name</label><input id="masterStatus"></div>
+<div><label>Dock / Zone Number</label><input id="masterDock"></div>
+<div><label>DG Class</label><input id="masterDGClass"></div>
+<div><label>CSR Name</label><input id="masterCSR"></div>
+<div><label>VAS Activity</label><input id="masterVAS"></div>
+</div>
+<button class="btn" style="margin-top:18px" onclick="addMasterData()">＋ Add Master Data</button>
+</div>
+<div class="master-grid">
+<div class="master-box"><b>Customers</b><div id="masterCustomers" class="master-list"></div></div>
+<div class="master-box"><b>Vehicles</b><div id="masterVehicles" class="master-list"></div></div>
+<div class="master-box"><b>UOM</b><div id="masterUOMList" class="master-list"></div></div>
+<div class="master-box"><b>Status</b><div id="masterStatuses" class="master-list"></div></div>
+<div class="master-box"><b>Dock / Zone</b><div id="masterDocks" class="master-list"></div></div>
+<div class="master-box"><b>DG Class</b><div id="masterDGClasses" class="master-list"></div></div>
+<div class="master-box"><b>CSR</b><div id="masterCSRs" class="master-list"></div></div>
+<div class="master-box"><b>VAS Activity</b><div id="masterVASList" class="master-list"></div></div>
+</div>
+</section>
+</div>
+</div>
+
+
+<!-- ==================== SLIDE 3 ==================== -->
+<div id="warehousePage" class="hidden">
+<nav class="navbar"><div class="brand">HITRA WMS — WAREHOUSE</div><div class="user-area"><span id="warehouseUser"></span><button class="btn btn-secondary btn-small" onclick="logout()">Logout</button></div></nav>
+<div class="container">
+<div class="card">
+<h2>Warehouse Data Entry</h2>
+<div class="notice">Warehouse can update <b>Quantity</b>, <b>Reporting Time</b> and <b>Dispatch Time</b>.<br><br>Reporting Time → <b>Running</b><br>Dispatch Time → <b>Complete</b></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>ID</th><th>Customer</th><th>Type</th><th>Vehicle Number</th><th>QTY</th><th>UOM</th><th>Status</th><th>Reporting Time</th><th>Dispatch Time</th><th>Action</th></tr></thead>
+<tbody id="warehouseTableBody"></tbody>
+</table>
+</div></div>
+<div class="card"><h3>Warehouse Saved Entries</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>ID</th><th>Customer</th><th>Vehicle Number</th><th>QTY</th><th>Status</th><th>Reporting</th><th>Dispatch</th></tr></thead>
+<tbody id="warehouseSavedBody"></tbody>
+</table>
+</div></div>
+</div>
+</div>
+
+
+<!-- ==================== SLIDE 4 ==================== -->
+<div id="wmsPage" class="hidden">
+<nav class="navbar"><div class="brand">HITRA WMS — WMS</div><div class="user-area"><span id="wmsUser"></span><button class="btn btn-secondary btn-small" onclick="logout()">Logout</button></div></nav>
+<div class="container">
+
+<div class="tabs">
+<button class="tab active" onclick="wmsTab('wmsDashboard',this)">📊 Chart</button>
+<button class="tab" onclick="wmsTab('wmsSalary',this)">💰 Salary Slip</button>
+</div>
+
+<section id="wmsDashboard" class="section active">
+<div class="card"><h2>WMS General Dashboard</h2>
+<div class="filter-grid">
+<div><label>Date From</label><input id="wmsDateFrom" type="date" onchange="renderWMS()"></div>
+<div><label>Date To</label><input id="wmsDateTo" type="date" onchange="renderWMS()"></div>
+</div></div>
+<div class="wms-kpi">
+<div class="wms-card">Total Entries<div id="wmsTotal" class="wms-number">0</div></div>
+<div class="wms-card">Total Quantity<div id="wmsQty" class="wms-number">0</div></div>
+<div class="wms-card">Inbound<div id="wmsInbound" class="wms-number">0</div></div>
+<div class="wms-card">Outbound<div id="wmsOutbound" class="wms-number">0</div></div>
+<div class="wms-card">Overtime Hours<div id="wmsOT" class="wms-number">0</div></div>
+</div>
+<div class="chart-grid" style="margin-top:18px">
+<div class="card chart"><h3>Inbound vs Outbound</h3><div id="wmsType"></div></div>
+<div class="card chart"><h3>DG vs Non DG</h3><div id="wmsDG"></div></div>
+<div class="card chart"><h3>Dock / Zone vs Quantity</h3><div id="wmsDock"></div></div>
+<div class="card chart"><h3>Weekly Inbound vs Outbound</h3><div id="wmsWeekly"></div></div>
+<div class="card chart"><h3>Customer vs Quantity</h3><div id="wmsCustomer"></div></div>
+<div class="card chart"><h3>Status</h3><div id="wmsStatus"></div></div>
+</div>
+</section>
+
+
+<section id="wmsSalary" class="section">
+
+<!-- SALARY MASTER -->
+<div class="card">
+<h2>Salary Master</h2>
+<div class="form-grid">
+<div><label>Employee Name</label><input id="salaryEmployee"></div>
+<div><label>Employee Post</label><input id="salaryPost"></div>
+<div><label>Employee Month Salary</label><input id="salaryMonth" type="number" min="0"></div>
+<div><label>Employee Per Day Salary</label><input id="salaryDay" type="number" min="0" step=".01"></div>
+<div><label>Employee Overtime Pay By Hours</label><input id="salaryOTRate" type="number" min="0" step=".01"></div>
+</div>
+<button class="btn" style="margin-top:18px" onclick="saveSalaryMaster()">＋ Add / Update Employee</button>
+</div>
+
+<!-- SALARY MASTER TABLE -->
+<div class="card">
+<h3>Salary Employees</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Employee Name</th><th>Employee Post</th><th>Month Salary</th><th>Per Day Salary</th><th>Overtime Pay By Hours</th><th>Action</th></tr></thead>
+<tbody id="salaryMasterBody"></tbody>
+</table>
+</div>
+</div>
+
+<!-- OVERTIME ENTRY -->
+<div class="card">
+<h2>Overtime Entry</h2>
+<div class="notice">
+Select the exact overtime date. After SAVE, the overtime amount is automatically added to that employee's Salary Sheet for that same date.
+</div>
+<div class="form-grid">
+<div><label>Employee Name</label><select id="salaryOTEmployee"></select></div>
+<div><label>Overtime Date</label><input id="salaryOTDate" type="date"></div>
+<div><label>Overtime Hours</label><input id="salaryOTHours" type="number" min="0" step=".5"></div>
+<div><label>Note</label><input id="salaryOTNote" placeholder="Overtime note"></div>
+</div>
+<div class="form-actions">
+<button class="btn btn-green" onclick="saveSalaryOvertime()">SAVE OVERTIME</button>
+</div>
+</div>
+
+<!-- OVERTIME SUMMARY -->
+<div class="card">
+<h3>Overtime Summary</h3>
+<div class="form-actions">
+<button class="btn btn-green btn-small" onclick="downloadOvertime()">⬇ Download Overtime Excel</button>
+</div>
+<div class="table-wrap" style="margin-top:12px">
+<table>
+<thead><tr><th>Date</th><th>Employee Name</th><th>Employee Post</th><th>Hours</th><th>Paid/Hour</th><th>Total</th><th>Note</th><th>Action</th></tr></thead>
+<tbody id="overtimeSummaryBody"></tbody>
+</table>
+</div>
+</div>
+
+<!-- SALARY SHEET -->
+<div class="card">
+<h2>Salary Sheet</h2>
+<div id="salaryMonthTitle" class="month-title"></div>
+
+<div class="salary-search">
+<label>Search Employee</label>
+<input id="salarySearch" placeholder="Search employee..." oninput="renderSalary()">
+</div>
+
+<div class="form-actions">
+<button class="btn btn-green btn-small" onclick="changeSalaryMonth(0)">This Month</button>
+<button class="btn btn-secondary btn-small" onclick="changeSalaryMonth(-1)">Previous Month</button>
+</div>
+
+<div class="salary-scroll" style="margin-top:15px">
+<table class="salary-table">
+<thead id="salaryHead"></thead>
+<tbody id="salaryBody"></tbody>
+</table>
+</div>
+</div>
+
+<!-- SALARY SUMMARY -->
+<div class="card">
+<h3>Salary Summary</h3>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>Employee Name</th><th>Employee Post</th><th>Month Salary</th><th>Cut Salary</th><th>Overtime Pay</th><th>Total Salary</th><th>Edit</th></tr>
+</thead>
+<tbody id="salarySummary"></tbody>
+</table>
+</div>
+<br>
+<button class="btn btn-green" onclick="downloadSalary()">⬇ Download Salary Excel</button>
+</div>
+
+</section>
+</div>
+</div>
+
+
+<!-- ==================== ADMIN MODAL ==================== -->
+<div id="adminModal" class="modal">
+<div class="modal-box">
+<h2>Admin Login</h2>
+<label>Admin ID</label><input id="adminLoginId">
+<label>Password</label><input id="adminLoginPassword" type="password">
+<div id="adminError" class="login-error"></div>
+<div class="form-actions">
+<button class="btn" onclick="adminLogin()">Login</button>
+<button class="btn btn-secondary" onclick="closeAdminModal()">Cancel</button>
+</div>
+</div>
+</div>
+
+
+<!-- ==================== ADMIN PAGE ==================== -->
+<div id="adminPage" class="hidden">
+<nav class="navbar">
+<div class="brand">HITRA ADMIN</div>
+<button class="btn btn-secondary btn-small" onclick="adminLogout()">Back to Login</button>
+</nav>
+
+<div class="container">
+
+<div class="card">
+<h2>Create User Login</h2>
+<div class="form-grid">
+<div><label>Login ID</label><input id="newUserId"></div>
+<div><label>Password</label><input id="newUserPassword" type="password"></div>
+<div><label>Post</label><select id="newUserRole"><option value="office">Office</option><option value="warehouse">Warehouse</option><option value="wms">WMS</option></select></div>
+</div>
+<button class="btn" style="margin-top:18px" onclick="createUser()">＋ Create User</button>
+</div>
+
+<div class="card">
+<h3>Cloud Storage</h3>
+<div class="notice">Upload Excel, PDF, images or other WMS files to Firebase Cloud Storage.</div>
+<div class="cloud-upload">
+<input id="cloudFile" type="file">
+<button class="btn btn-green" style="margin-top:10px" onclick="uploadCloudFile()">☁ Upload to Cloud</button>
+<div id="cloudUploadStatus" style="margin-top:10px;font-size:13px"></div>
+</div>
+</div>
+
+<div class="card">
+<h3>Created Users</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Login ID</th><th>Post</th><th>Action</th></tr></thead>
+<tbody id="usersBody"></tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+
+
+<script>
+"use strict";
+
+/* =====================================================
+ DATABASE
+===================================================== */
+
+const DB_KEY="HITRA_WMS_FINAL_2026_09";
+
+const ADMIN_ID="patel.09";
+const ADMIN_PASSWORD="2816";
+
+const DEFAULT_DB={
+    users:[],
+    entries:[],
+    overtime:[],
+    salaryEmployees:[],
+    attendance:{},
+    masters:{
+        customers:[{name:"Demo Customer",phone:"",email:""}],
+        vehicles:["Truck","Trailer","Tanker","Van"],
+        uoms:["KG","MT","Litre","Pallet","IBC"],
+        statuses:["Pending","Running","Complete"],
+        docks:["Dock 1","Dock 2","Zone A","Zone B"],
+        dgclasses:["1","2","3","4","5","6","7","8","9"],
+        csrs:["CSR 1","CSR 2"],
+        vas:["Labelling","Label Remove","Repacking","Other"]
+    }
+};
+
+function clone(value){
+    return JSON.parse(JSON.stringify(value));
+}
+
+function loadDB(){
+    const raw=localStorage.getItem(DB_KEY);
+
+    if(!raw){
+        const fresh=clone(DEFAULT_DB);
+        localStorage.setItem(DB_KEY,JSON.stringify(fresh));
+        return fresh;
+    }
+
+    try{
+        const data=JSON.parse(raw);
+
+        if(!Array.isArray(data.users)) data.users=[];
+        if(!Array.isArray(data.entries)) data.entries=[];
+        if(!Array.isArray(data.overtime)) data.overtime=[];
+        if(!Array.isArray(data.salaryEmployees)) data.salaryEmployees=[];
+        if(!data.attendance) data.attendance={};
+        if(!data.masters) data.masters={};
+
+        Object.keys(DEFAULT_DB.masters).forEach(function(key){
+            if(!Array.isArray(data.masters[key])){
+                data.masters[key]=clone(DEFAULT_DB.masters[key]);
+            }
+        });
+
+        return data;
+    }catch(error){
+        localStorage.removeItem(DB_KEY);
+        return clone(DEFAULT_DB);
+    }
+}
+
+let db=loadDB();
+let currentUser=null;
+let firebaseReady=false;
+let cloudSyncBusy=false;
+let cloudUnsubscribe=null;
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBWSUavaLqiM_DP0W-3JbP6CqoGqKqJRdc",
+    authDomain: "hitra-60b4c.firebaseapp.com",
+    projectId: "hitra-60b4c",
+    storageBucket: "hitra-60b4c.firebasestorage.app",
+    messagingSenderId: "860835881167",
+    appId: "1:860835881167:web:799f1b9d9ad1e81cfcd7ba",
+    measurementId: "G-KGD64JPFDR"
+};
+
+let firebaseApp=null;
+let cloudDb=null;
+let cloudStorage=null;
+
+function setCloudStatus(text, state){
+    const el=document.getElementById("cloudStatus");
+    if(!el) return;
+    el.textContent=text;
+    el.className=state||"";
+}
+
+function safeLocalSave(){
+    localStorage.setItem(DB_KEY,JSON.stringify(db));
+}
+
+/* =====================================================
+ FIREBASE CLOUD DATABASE + STORAGE
+===================================================== */
+
+function initFirebaseCloud(){
+    try{
+        if(!firebase.apps.length){
+            firebaseApp=firebase.initializeApp(firebaseConfig);
+        }else{
+            firebaseApp=firebase.app();
+        }
+
+        cloudDb=firebase.firestore();
+        cloudStorage=firebase.storage();
+        firebaseReady=true;
+        setCloudStatus("☁ Cloud: Connected","online");
+
+        const cloudRef=cloudDb.collection("hitra_wms").doc("database");
+
+        cloudUnsubscribe=cloudRef.onSnapshot(
+            function(snapshot){
+                if(snapshot.exists){
+                    const remote=snapshot.data().data;
+                    if(remote){
+                        try{
+                            const parsed=typeof remote==="string"
+                                ?JSON.parse(remote)
+                                :remote;
+                            db=normalizeDB(parsed);
+                            safeLocalSave();
+                            refreshAllPages();
+                        }catch(error){
+                            console.error("Cloud data parse error:",error);
+                        }
+                    }
+                }else{
+                    cloudRef.set({
+                        data: JSON.stringify(db),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }).catch(function(error){
+                        console.error("Initial cloud save failed:",error);
+                        setCloudStatus("☁ Cloud: Rules/permission needed","offline");
+                    });
+                }
+            },
+            function(error){
+                console.error("Firestore listener error:",error);
+                firebaseReady=false;
+                setCloudStatus("☁ Cloud: Permission/connection error","offline");
+            }
+        );
+    }catch(error){
+        console.error("Firebase initialization error:",error);
+        firebaseReady=false;
+        setCloudStatus("☁ Cloud: Not connected","offline");
+    }
+}
+
+function normalizeDB(data){
+    const result=data && typeof data==="object" ? data : clone(DEFAULT_DB);
+
+    if(!Array.isArray(result.users)) result.users=[];
+    if(!Array.isArray(result.entries)) result.entries=[];
+    if(!Array.isArray(result.overtime)) result.overtime=[];
+    if(!Array.isArray(result.salaryEmployees)) result.salaryEmployees=[];
+    if(!result.attendance) result.attendance={};
+    if(!result.masters) result.masters={};
+
+    Object.keys(DEFAULT_DB.masters).forEach(function(key){
+        if(!Array.isArray(result.masters[key])){
+            result.masters[key]=clone(DEFAULT_DB.masters[key]);
+        }
+    });
+
+    return result;
+}
+
+function refreshAllPages(){
+    try{
+        renderMasters();
+        renderOffice();
+        renderWarehouse();
+        renderWMS();
+        renderSalaryMaster();
+        renderOvertimeSummary();
+        renderSalary();
+        if(document.getElementById("usersBody")) renderUsers();
+    }catch(error){
+        console.error("Refresh error:",error);
+    }
+}
+
+/* =====================================================
+ SAVE
+===================================================== */
+
+function saveDB(){
+    safeLocalSave();
+
+    if(!firebaseReady || !cloudDb || cloudSyncBusy) return;
+
+    cloudSyncBusy=true;
+    cloudDb.collection("hitra_wms").doc("database").set({
+        data: JSON.stringify(db),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    },{merge:true})
+    .then(function(){
+        setCloudStatus("☁ Cloud: Synced","online");
+    })
+    .catch(function(error){
+        console.error("Cloud save failed:",error);
+        setCloudStatus("☁ Cloud: Save failed","offline");
+    })
+    .finally(function(){
+        cloudSyncBusy=false;
+    });
+}
+
+async function uploadCloudFile(){
+    const input=document.getElementById("cloudFile");
+    const status=document.getElementById("cloudUploadStatus");
+
+    if(!input || !input.files || !input.files[0]){
+        alert("Please select a file.");
+        return;
+    }
+
+    if(!firebaseReady || !cloudStorage){
+        status.textContent="Firebase Cloud Storage is not connected.";
+        return;
+    }
+
+    const file=input.files[0];
+    const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+    const path="HITRA_WMS_FILES/"+Date.now()+"_"+safeName;
+
+    status.textContent="Uploading...";
+
+    try{
+        const storageRef=cloudStorage.ref(path);
+        const snapshot=await storageRef.put(file);
+        const url=await snapshot.ref.getDownloadURL();
+
+        status.innerHTML=
+            'Uploaded successfully. <a href="'+escAttr(url)+'" target="_blank" rel="noopener">Open file</a>';
+        input.value="";
+    }catch(error){
+        console.error(error);
+        status.textContent="Upload failed. Check Firebase Storage rules/plan.";
+    }
+}
+
+
+/* =====================================================
+ PAGE CONTROL
+===================================================== */
+
+function showPage(id){
+
+    const pages=[
+        "loginPage",
+        "officePage",
+        "warehousePage",
+        "wmsPage",
+        "adminPage"
+    ];
+
+    pages.forEach(function(pageId){
+        const element=document.getElementById(pageId);
+        if(element) element.classList.add("hidden");
+    });
+
+    const target=document.getElementById(id);
+    if(target) target.classList.remove("hidden");
+}
+
+
+/* =====================================================
+ LOGIN
+===================================================== */
+
+function login(){
+
+    const id=document.getElementById("loginId").value.trim();
+    const password=document.getElementById("loginPassword").value;
+    const role=document.getElementById("loginRole").value;
+    const error=document.getElementById("loginError");
+
+    error.textContent="";
+
+    if(!id || !password){
+        error.textContent="Please enter Login ID and Password.";
+        return;
+    }
+
+    const user=db.users.find(function(item){
+        return item.id===id &&
+               item.password===password &&
+               item.role===role;
+    });
+
+    if(!user){
+        error.textContent="Wrong Login ID, Password or Post.";
+        return;
+    }
+
+    currentUser=user;
+
+    if(role==="office"){
+        showPage("officePage");
+        document.getElementById("officeUser").textContent=id+" • OFFICE";
+        renderMasters();
+        renderOffice();
+    }
+    else if(role==="warehouse"){
+        showPage("warehousePage");
+        document.getElementById("warehouseUser").textContent=id+" • WAREHOUSE";
+        renderWarehouse();
+    }
+    else if(role==="wms"){
+        showPage("wmsPage");
+        document.getElementById("wmsUser").textContent=id+" • WMS";
+        setDefaultOTDate();
+        renderWMS();
+        renderSalaryMaster();
+        renderOvertimeSummary();
+        renderSalary();
+    }
+}
+
+
+function logout(){
+    currentUser=null;
+    showPage("loginPage");
+    document.getElementById("loginId").value="";
+    document.getElementById("loginPassword").value="";
+    document.getElementById("loginError").textContent="";
+}
+
+
+/* =====================================================
+ ADMIN
+===================================================== */
+
+function openAdminModal(){
+    document.getElementById("adminModal").classList.add("show");
+    document.getElementById("adminLoginId").value="";
+    document.getElementById("adminLoginPassword").value="";
+    document.getElementById("adminError").textContent="";
+}
+
+function closeAdminModal(){
+    document.getElementById("adminModal").classList.remove("show");
+}
+
+function adminLogin(){
+
+    const id=document.getElementById("adminLoginId").value.trim();
+    const password=document.getElementById("adminLoginPassword").value;
+
+    if(id===ADMIN_ID && password===ADMIN_PASSWORD){
+        closeAdminModal();
+        showPage("adminPage");
+        renderUsers();
+    }else{
+        document.getElementById("adminError").textContent=
+            "Wrong Admin ID or Password.";
+    }
+}
+
+function adminLogout(){
+    showPage("loginPage");
+}
+
+function createUser(){
+
+    const id=document.getElementById("newUserId").value.trim();
+    const password=document.getElementById("newUserPassword").value;
+    const role=document.getElementById("newUserRole").value;
+
+    if(!id || !password){
+        alert("Please enter Login ID and Password.");
+        return;
+    }
+
+    const exists=db.users.some(function(user){
+        return user.id.toLowerCase()===id.toLowerCase();
+    });
+
+    if(exists || id.toLowerCase()===ADMIN_ID.toLowerCase()){
+        alert("This Login ID already exists.");
+        return;
+    }
+
+    db.users.push({
+        id:id,
+        password:password,
+        role:role
+    });
+
+    saveDB();
+    renderUsers();
+
+    document.getElementById("newUserId").value="";
+    document.getElementById("newUserPassword").value="";
+
+    alert("User created successfully.");
+}
+
+function renderUsers(){
+
+    const body=document.getElementById("usersBody");
+
+    if(!db.users.length){
+        body.innerHTML="<tr><td colspan='3'>No users created.</td></tr>";
+        return;
+    }
+
+    body.innerHTML=db.users.map(function(user,index){
+        return`
+<tr>
+<td>${esc(user.id)}</td>
+<td>${esc(user.role)}</td>
+<td>
+<button class="btn btn-red btn-small" onclick="deleteUser(${index})">Delete</button>
+</td>
+</tr>`;
+    }).join("");
+}
+
+function deleteUser(index){
+
+    if(!confirm("Delete this user?")) return;
+
+    db.users.splice(index,1);
+    saveDB();
+    renderUsers();
+}
+
+
+/* =====================================================
+ OFFICE TABS
+===================================================== */
+
+function officeTab(id,button){
+
+    document.querySelectorAll("#officePage .section")
+        .forEach(function(section){
+            section.classList.remove("active");
+        });
+
+    document.getElementById(id).classList.add("active");
+
+    document.querySelectorAll("#officePage .tab")
+        .forEach(function(tab){
+            tab.classList.remove("active");
+        });
+
+    button.classList.add("active");
+
+    if(id==="officeDashboard") renderOffice();
+    if(id==="officeMasters") renderMasters();
+}
+
+
+/* =====================================================
+ SELECT HELPERS
+===================================================== */
+
+function setSelect(id,values,includeAll){
+
+    const element=document.getElementById(id);
+    if(!element) return;
+
+    const previous=element.value;
+    let html="";
+
+    if(includeAll){
+        html+='<option value="">All</option>';
+    }
+
+    values.forEach(function(item){
+
+        const value=
+            typeof item==="object"
+            ?item.name
+            :item;
+
+        html+=
+            '<option value="'+escAttr(value)+'">'+
+            esc(value)+
+            '</option>';
+    });
+
+    element.innerHTML=html;
+
+    if(
+        Array.from(element.options)
+        .some(function(option){
+            return option.value===previous;
+        })
+    ){
+        element.value=previous;
+    }
+}
+
+
+/* =====================================================
+ MASTERS
+===================================================== */
+
+function renderMasters(){
+
+    const m=db.masters;
+
+    setSelect("entryCustomer",m.customers);
+    setSelect("entryUOM",m.uoms);
+    setSelect("entryVehicle",m.vehicles);
+    setSelect("entryCSR",m.csrs);
+    setSelect("entryDock",m.docks);
+    setSelect("entryDGClass",m.dgclasses);
+    setSelect("entryVAS",m.vas);
+
+    setSelect("filterCustomer",m.customers,true);
+    setSelect("filterUOM",m.uoms,true);
+    setSelect("filterCSR",m.csrs,true);
+    setSelect("filterDock",m.docks,true);
+    setSelect("filterDGClass",m.dgclasses,true);
+
+    const vehicleNumbers=[...new Set(db.entries.map(function(e){return String(e.vehicleNumber||"").trim();}).filter(Boolean))].sort();
+    setSelect("filterVehicleNumber",vehicleNumbers,true);
+
+    renderMasterList("masterCustomers",
+        m.customers.map(function(x){return x.name;}),"customers");
+
+    renderMasterList("masterVehicles",m.vehicles,"vehicles");
+    renderMasterList("masterUOMList",m.uoms,"uoms");
+    renderMasterList("masterStatuses",m.statuses,"statuses");
+    renderMasterList("masterDocks",m.docks,"docks");
+    renderMasterList("masterDGClasses",m.dgclasses,"dgclasses");
+    renderMasterList("masterCSRs",m.csrs,"csrs");
+    renderMasterList("masterVASList",m.vas,"vas");
+}
+
+function renderMasterList(id,list,type){
+
+    const element=document.getElementById(id);
+    if(!element) return;
+
+    element.innerHTML=list.map(function(item,index){
+        return`
+<span class="master-tag">
+${esc(item)}
+<button class="master-delete"
+onclick="deleteMaster('${js(type)}',${index})">
+Delete
+</button>
+</span>`;
+    }).join("");
+}
+
+function deleteMaster(type,index){
+
+    if(!confirm("Delete this master data?")) return;
+
+    if(!db.masters[type]) return;
+
+    db.masters[type].splice(index,1);
+
+    saveDB();
+    renderMasters();
+    renderOffice();
+}
+
+function addMasterData(){
+
+    const m=db.masters;
+
+    const customer=document.getElementById("masterCustomer").value.trim();
+    const phone=document.getElementById("masterPhone").value.trim();
+    const email=document.getElementById("masterEmail").value.trim();
+    const vehicle=document.getElementById("masterVehicle").value.trim();
+    const uom=document.getElementById("masterUOM").value.trim();
+    const status=document.getElementById("masterStatus").value.trim();
+    const dock=document.getElementById("masterDock").value.trim();
+    const dg=document.getElementById("masterDGClass").value.trim();
+    const csr=document.getElementById("masterCSR").value.trim();
+    const vas=document.getElementById("masterVAS").value.trim();
+
+    if(customer && !m.customers.some(function(x){return x.name===customer;})){
+        m.customers.push({
+            name:customer,
+            phone:phone,
+            email:email
+        });
+    }
+
+    if(vehicle && !m.vehicles.includes(vehicle)) m.vehicles.push(vehicle);
+    if(uom && !m.uoms.includes(uom)) m.uoms.push(uom);
+    if(status && !m.statuses.includes(status)) m.statuses.push(status);
+    if(dock && !m.docks.includes(dock)) m.docks.push(dock);
+    if(dg && !m.dgclasses.includes(dg)) m.dgclasses.push(dg);
+    if(csr && !m.csrs.includes(csr)) m.csrs.push(csr);
+    if(vas && !m.vas.includes(vas)) m.vas.push(vas);
+
+    saveDB();
+    renderMasters();
+
+    document.querySelectorAll("#officeMasters input")
+        .forEach(function(input){
+            input.value="";
+        });
+
+    alert("Master data added successfully.");
+}
+
+
+/* =====================================================
+ OFFICE ENTRY
+===================================================== */
+
+function getOfficeForm(){
+
+    return{
+        id:
+            document.getElementById("editingId").textContent ||
+            "HITRA-"+Date.now(),
+
+        date:
+            new Date().toISOString().slice(0,10),
+
+        customer:
+            document.getElementById("entryCustomer").value,
+
+        type:
+            document.getElementById("entryType").value,
+
+        qty:
+            Number(document.getElementById("entryQty").value)||0,
+
+        uom:
+            document.getElementById("entryUOM").value,
+
+        vehicle:
+            document.getElementById("entryVehicle").value,
+
+        vehicleNumber:
+            document.getElementById("entryVehicleNumber").value.trim(),
+
+        status:
+            document.getElementById("entryStatus").value,
+
+        requested:
+            document.getElementById("entryRequested").value,
+
+        approved:
+            document.getElementById("entryApproved").value,
+
+        reportingTime:"",
+        dispatchTime:"",
+
+        labelling:
+            document.getElementById("entryLabelling").value,
+
+        customs:
+            document.getElementById("entryCustoms").value,
+
+        transportation:
+            document.getElementById("entryTransportation").value,
+
+        vas:
+            document.getElementById("entryVAS").value,
+
+        csr:
+            document.getElementById("entryCSR").value,
+
+        dock:
+            document.getElementById("entryDock").value,
+
+        dg:
+            document.getElementById("entryDG").value,
+
+        dgClass:
+            document.getElementById("entryDGClass").value,
+
+        remarks:
+            document.getElementById("entryCSR").value,
+
+        overtime:
+            document.getElementById("entryOvertime").value,
+
+        overtimeHours:
+            Number(document.getElementById("entryOvertimeHours").value)||0,
+
+        state:"Saved",
+        warehousePosted:false
+    };
+}
+
+function saveOfficeEntry(state){
+
+    const entry=getOfficeForm();
+
+    if(!entry.customer || entry.qty<=0 || !entry.uom){
+        alert("Please enter Customer, QTY and UOM.");
+        return;
+    }
+
+    const index=db.entries.findIndex(function(item){
+        return item.id===entry.id;
+    });
+
+    if(index>=0){
+
+        entry.reportingTime=db.entries[index].reportingTime||"";
+        entry.dispatchTime=db.entries[index].dispatchTime||"";
+        entry.warehousePosted=db.entries[index].warehousePosted||false;
+
+        db.entries[index]=entry;
+
+    }else{
+
+        db.entries.push(entry);
+
+    }
+
+    entry.state=state;
+
+    saveDB();
+    clearOfficeEntry();
+    renderOffice();
+    renderWarehouse();
+
+    alert(
+        state==="Posted"
+        ?"Entry posted successfully to Warehouse."
+        :"Entry saved successfully."
+    );
+}
+
+function clearOfficeEntry(){
+
+    document.querySelectorAll("#officeEntry input")
+        .forEach(function(input){
+            input.value="";
+        });
+
+    document.getElementById("editingId").textContent="";
+}
+
+function editOfficeEntry(id){
+
+    const entry=db.entries.find(function(item){
+        return item.id===id;
+    });
+
+    if(!entry) return;
+
+    officeTab(
+        "officeEntry",
+        document.querySelectorAll("#officePage .tab")[1]
+    );
+
+    document.getElementById("editingId").textContent=entry.id;
+
+    const fields={
+        entryCustomer:entry.customer,
+        entryType:entry.type,
+        entryQty:entry.qty,
+        entryUOM:entry.uom,
+        entryVehicle:entry.vehicle,
+        entryVehicleNumber:entry.vehicleNumber||"",
+        entryStatus:entry.status,
+        entryRequested:entry.requested||"",
+        entryApproved:entry.approved||"",
+        entryLabelling:entry.labelling||"Planned",
+        entryCustoms:entry.customs||"Yes",
+        entryTransportation:entry.transportation||"Yes",
+        entryVAS:entry.vas||"",
+        entryCSR:entry.csr||"",
+        entryDock:entry.dock||"",
+        entryDG:entry.dg||"Non DG",
+        entryDGClass:entry.dgClass||"",
+        entryOvertime:entry.overtime||"No",
+        entryOvertimeHours:entry.overtimeHours||0
+    };
+
+    Object.entries(fields).forEach(function(pair){
+        const element=document.getElementById(pair[0]);
+        if(element) element.value=pair[1];
+    });
+}
+
+function deleteOfficeEntry(id){
+
+    if(!confirm("Delete this entry?")) return;
+
+    db.entries=db.entries.filter(function(item){
+        return item.id!==id;
+    });
+
+    saveDB();
+    renderOffice();
+    renderWarehouse();
+}
+
+
+/* =====================================================
+ OFFICE DASHBOARD
+===================================================== */
+
+function getFilteredOffice(){
+
+    const from=document.getElementById("filterFrom").value;
+    const to=document.getElementById("filterTo").value;
+    const customer=document.getElementById("filterCustomer").value;
+    const status=document.getElementById("filterStatus").value;
+    const uom=document.getElementById("filterUOM").value;
+    const dg=document.getElementById("filterDG").value;
+    const dgClass=document.getElementById("filterDGClass").value;
+    const csr=document.getElementById("filterCSR").value;
+    const dock=document.getElementById("filterDock").value;
+    const vehicleNumber=document.getElementById("filterVehicleNumber").value;
+
+    return db.entries.filter(function(e){
+
+        return(
+            (!from||e.date>=from)&&
+            (!to||e.date<=to)&&
+            (!customer||e.customer===customer)&&
+            (!status||e.status===status)&&
+            (!uom||e.uom===uom)&&
+            (!dg||e.dg===dg)&&
+            (!dgClass||e.dgClass===dgClass)&&
+            (!csr||e.csr===csr)&&
+            (!dock||e.dock===dock)&&
+            (!vehicleNumber||String(e.vehicleNumber||"").trim()===vehicleNumber)
+        );
+    });
+}
+
+function renderOffice(){
+
+    renderMasters();
+
+    const data=getFilteredOffice();
+
+    document.getElementById("kCustomer").textContent=
+        new Set(data.map(function(e){return e.customer;})).size;
+
+    document.getElementById("kQty").textContent=
+        data.reduce(function(sum,e){
+            return sum+Number(e.qty||0);
+        },0);
+
+    document.getElementById("kInbound").textContent=
+        data.filter(function(e){return e.type==="Inbound";}).length;
+
+    document.getElementById("kOutbound").textContent=
+        data.filter(function(e){return e.type==="Outbound";}).length;
+
+    document.getElementById("kVehicle").textContent=
+        new Set(
+            data.map(function(e){
+                return e.vehicleNumber;
+            }).filter(Boolean)
+        ).size;
+
+    document.getElementById("kLoading").textContent=
+        average(
+            data
+            .filter(function(e){return e.type==="Outbound";})
+            .map(entryDuration)
+            .filter(function(x){return x!==null;})
+        );
+
+    document.getElementById("kOffloading").textContent=
+        average(
+            data
+            .filter(function(e){return e.type==="Inbound";})
+            .map(entryDuration)
+            .filter(function(x){return x!==null;})
+        );
+
+    renderOfficeTable(data);
+
+    barChart("officeChartDG",groupCount(data,"dg"));
+    barChart("officeChartDock",groupQty(data,"dock"));
+    barChart("officeChartCustomer",groupCount(data,"customer"));
+    barChart("officeChartType",groupCount(data,"type"));
+}
+
+function entryDuration(e){
+
+    if(!e.reportingTime||!e.dispatchTime)
+        return null;
+
+    const start=new Date(e.reportingTime);
+    const end=new Date(e.dispatchTime);
+
+    const hours=(end-start)/3600000;
+
+    return hours>=0?hours:null;
+}
+
+function average(values){
+
+    if(!values.length) return "0.00";
+
+    return(
+        values.reduce(function(a,b){return a+b;},0)/
+        values.length
+    ).toFixed(2);
+}
+
+function groupCount(data,key){
+
+    const result={};
+
+    data.forEach(function(e){
+
+        const value=e[key]||"Unknown";
+
+        result[value]=(result[value]||0)+1;
+
+    });
+
+    return result;
+}
+
+function groupQty(data,key){
+
+    const result={};
+
+    data.forEach(function(e){
+
+        const value=e[key]||"Unknown";
+
+        result[value]=
+            (result[value]||0)+Number(e.qty||0);
+
+    });
+
+    return result;
+}
+
+function barChart(id,data){
+
+    const element=document.getElementById(id);
+
+    if(!element) return;
+
+    const values=Object.values(data);
+
+    if(!values.length){
+
+        element.innerHTML="<p>No data available.</p>";
+        return;
+    }
+
+    const max=Math.max(1,...values);
+
+    element.innerHTML=
+        Object.entries(data).map(function(item){
+
+            const width=Math.max(
+                3,
+                item[1]/max*100
+            );
+
+            return`
+<div class="bar-row">
+<div class="bar-label">${esc(item[0])}</div>
+<div class="bar-bg">
+<div class="bar-fill" style="width:${width}%"></div>
+</div>
+<div class="bar-num">${item[1]}</div>
+</div>`;
+
+        }).join("");
+}
+
+
+/* =====================================================
+ OFFICE TABLE
+===================================================== */
+
+function renderOfficeTable(data){
+
+    const columns=[
+        ["id","ID"],
+        ["date","Date"],
+        ["type","Type"],
+        ["customer","Customer"],
+        ["csr","CSR"],
+        ["qty","QTY"],
+        ["uom","UOM"],
+        ["vehicle","Type Of Vehicle"],
+        ["vehicleNumber","Vehicle Number"],
+        ["status","Status"],
+        ["requested","Requested Time Slot"],
+        ["approved","Approved Time Slot"],
+        ["reportingTime","Reporting Time"],
+        ["dispatchTime","Dispatch Time"],
+        ["labelling","Labelling Status"],
+        ["customs","Customs Clearance"],
+        ["transportation","Transportation"],
+        ["vas","VAS Activity"],
+        ["remarks","Remarks"],
+        ["overtime","Overtime"],
+        ["overtimeHours","Overtime Hours"]
+    ];
+
+    document.getElementById("officeTableHead").innerHTML=
+        "<tr>"+
+        columns.map(function(c){
+            return"<th>"+c[1]+"</th>";
+        }).join("")+
+        "<th>Actions</th></tr>";
+
+    const body=document.getElementById("officeTableBody");
+
+    if(!data.length){
+
+        body.innerHTML=
+            "<tr><td colspan='23'>No entries found.</td></tr>";
+
+        return;
+    }
+
+    body.innerHTML=
+        data.map(function(e){
+
+            return`
+<tr>
+${columns.map(function(c){
+
+    let value=e[c[0]]??"";
+
+    if(c[0]==="status")
+        value=statusHTML(value);
+
+    return"<td>"+value+"</td>";
+
+}).join("")}
+<td>
+<button class="btn btn-secondary btn-small" onclick="editOfficeEntry('${js(e.id)}')">Edit</button>
+<button class="btn btn-red btn-small" onclick="deleteOfficeEntry('${js(e.id)}')">Delete</button>
+</td>
+</tr>`;
+
+        }).join("");
+}
+
+
+/* =====================================================
+ WAREHOUSE
+===================================================== */
+
+function renderWarehouse(){
+
+    const body=document.getElementById("warehouseTableBody");
+    const savedBody=document.getElementById("warehouseSavedBody");
+
+    const pending=db.entries.filter(function(e){
+
+        return(
+            e.state==="Posted" &&
+            e.warehousePosted!==true
+        );
+
+    });
+
+    if(!pending.length){
+
+        body.innerHTML=
+            "<tr><td colspan='10'>No entries posted from Office.</td></tr>";
+
+    }else{
+
+        body.innerHTML=
+            pending.map(function(e){
+
+                return`
+<tr>
+<td>${esc(e.id)}</td>
+<td>${esc(e.customer)}</td>
+<td>${esc(e.type)}</td>
+<td>${esc(e.vehicleNumber||"")}</td>
+<td>
+<input id="warehouseQty_${e.id}" type="number" value="${Number(e.qty||0)}" style="width:85px">
+</td>
+<td>${esc(e.uom)}</td>
+<td>${statusHTML(e.status)}</td>
+<td>
+<input id="warehouseReport_${e.id}" type="datetime-local" value="${escAttr(e.reportingTime||"")}">
+</td>
+<td>
+<input id="warehouseDispatch_${e.id}" type="datetime-local" value="${escAttr(e.dispatchTime||"")}">
+</td>
+<td>
+<button class="btn btn-green btn-small" onclick="warehouseSave('${js(e.id)}')">Save</button>
+<button class="btn btn-small" onclick="warehousePost('${js(e.id)}')">Post</button>
+</td>
+</tr>`;
+
+            }).join("");
+    }
+
+    const changed=db.entries.filter(function(e){
+        return e.reportingTime||e.dispatchTime;
+    });
+
+    savedBody.innerHTML=
+        changed.map(function(e){
+
+            return`
+<tr>
+<td>${esc(e.id)}</td>
+<td>${esc(e.customer)}</td>
+<td>${esc(e.vehicleNumber||"")}</td>
+<td>${Number(e.qty||0)}</td>
+<td>${statusHTML(e.status)}</td>
+<td>${esc(e.reportingTime||"")}</td>
+<td>${esc(e.dispatchTime||"")}</td>
+</tr>`;
+
+        }).join("")
+        ||
+        "<tr><td colspan='7'>No warehouse saved entries.</td></tr>";
+}
+
+function warehouseSave(id){
+    updateWarehouse(id,false);
+}
+
+function warehousePost(id){
+    updateWarehouse(id,true);
+}
+
+function updateWarehouse(id,post){
+
+    const entry=db.entries.find(function(e){
+        return e.id===id;
+    });
+
+    if(!entry) return;
+
+    entry.qty=
+        Number(
+            document.getElementById(
+                "warehouseQty_"+id
+            ).value
+        )||0;
+
+    entry.reportingTime=
+        document.getElementById(
+            "warehouseReport_"+id
+        ).value;
+
+    entry.dispatchTime=
+        document.getElementById(
+            "warehouseDispatch_"+id
+        ).value;
+
+    if(entry.dispatchTime){
+        entry.status="Complete";
+    }else if(entry.reportingTime){
+        entry.status="Running";
+    }
+
+    if(post){
+        entry.warehousePosted=true;
+    }
+
+    saveDB();
+    renderWarehouse();
+    renderOffice();
+
+    alert(
+        post
+        ?"Warehouse entry posted successfully."
+        :"Warehouse entry saved successfully."
+    );
+}
+
+
+/* =====================================================
+ OFFICE EXPORT
+===================================================== */
+
+function exportOffice(){
+
+    const data=getFilteredOffice();
+
+    const columns=[
+        ["id","ID"],
+        ["date","Date"],
+        ["type","Type"],
+        ["customer","Customer"],
+        ["csr","CSR"],
+        ["qty","QTY"],
+        ["uom","UOM"],
+        ["vehicle","Type Of Vehicle"],
+        ["vehicleNumber","Vehicle Number"],
+        ["status","Status"],
+        ["requested","Requested Time Slot"],
+        ["approved","Approved Time Slot"],
+        ["reportingTime","Reporting Time"],
+        ["dispatchTime","Dispatch Time"],
+        ["labelling","Labelling Status"],
+        ["customs","Customs Clearance"],
+        ["transportation","Transportation"],
+        ["vas","VAS Activity"],
+        ["remarks","Remarks"],
+        ["overtime","Overtime"],
+        ["overtimeHours","Overtime Hours"]
+    ];
+
+    let csv=
+        columns.map(function(c){
+            return csvCell(c[1]);
+        }).join(",")+"\n";
+
+    data.forEach(function(e){
+
+        csv+=
+            columns.map(function(c){
+                return csvCell(e[c[0]]??"");
+            }).join(",")+"\n";
+
+    });
+
+    downloadFile(
+        "HITRA_WMS_Day_to_Day.csv",
+        csv
+    );
+}
+
+
+/* =====================================================
+ WMS TABS
+===================================================== */
+
+function wmsTab(id,button){
+
+    document.querySelectorAll(
+        "#wmsPage .section"
+    ).forEach(function(section){
+        section.classList.remove("active");
+    });
+
+    document.getElementById(id).classList.add("active");
+
+    document.querySelectorAll(
+        "#wmsPage .tab"
+    ).forEach(function(tab){
+        tab.classList.remove("active");
+    });
+
+    button.classList.add("active");
+
+    if(id==="wmsDashboard"){
+        renderWMS();
+    }
+
+    if(id==="wmsSalary"){
+        setDefaultOTDate();
+        renderSalaryMaster();
+        renderOvertimeSummary();
+        renderSalary();
+    }
+}
+
+
+/* =====================================================
+ WMS DASHBOARD
+===================================================== */
+
+function getWMSData(){
+
+    const from=
+        document.getElementById("wmsDateFrom").value;
+
+    const to=
+        document.getElementById("wmsDateTo").value;
+
+    return db.entries.filter(function(e){
+
+        return(
+            (!from||e.date>=from)&&
+            (!to||e.date<=to)
+        );
+
+    });
+}
+
+function renderWMS(){
+
+    const data=getWMSData();
+
+    document.getElementById("wmsTotal").textContent=data.length;
+
+    document.getElementById("wmsQty").textContent=
+        data.reduce(function(a,e){
+            return a+Number(e.qty||0);
+        },0);
+
+    document.getElementById("wmsInbound").textContent=
+        data.filter(function(e){
+            return e.type==="Inbound";
+        }).length;
+
+    document.getElementById("wmsOutbound").textContent=
+        data.filter(function(e){
+            return e.type==="Outbound";
+        }).length;
+
+    document.getElementById("wmsOT").textContent=
+        data.reduce(function(a,e){
+            return a+Number(e.overtimeHours||0);
+        },0);
+
+    barChart(
+        "wmsType",
+        groupCount(data,"type")
+    );
+
+    barChart(
+        "wmsDG",
+        groupCount(data,"dg")
+    );
+
+    barChart(
+        "wmsDock",
+        groupQty(data,"dock")
+    );
+
+    barChart(
+        "wmsCustomer",
+        groupQty(data,"customer")
+    );
+
+    barChart(
+        "wmsStatus",
+        groupCount(data,"status")
+    );
+
+    renderWeekly(data);
+}
+
+function renderWeekly(data){
+
+    const result={};
+
+    data.forEach(function(e){
+
+        if(!e.date) return;
+
+        const day=
+            new Date(
+                e.date+"T00:00:00"
+            ).toLocaleDateString(
+                "en-US",
+                {weekday:"short"}
+            );
+
+        if(!result[day]){
+            result[day]={
+                Inbound:0,
+                Outbound:0
+            };
+        }
+
+        if(e.type==="Inbound"){
+            result[day].Inbound+=Number(e.qty||0);
+        }
+
+        if(e.type==="Outbound"){
+            result[day].Outbound+=Number(e.qty||0);
+        }
+
+    });
+
+    const element=document.getElementById("wmsWeekly");
+
+    if(!Object.keys(result).length){
+        element.innerHTML="<p>No weekly data.</p>";
+        return;
+    }
+
+    let html="";
+
+    Object.entries(result).forEach(function(item){
+
+        const max=Math.max(
+            1,
+            item[1].Inbound,
+            item[1].Outbound
+        );
+
+        html+=`
+
+<div style="margin-bottom:15px">
+
+<b>${esc(item[0])}</b>
+
+<div class="bar-row">
+<div class="bar-label">Inbound</div>
+<div class="bar-bg">
+<div class="bar-fill" style="width:${item[1].Inbound/max*100}%"></div>
+</div>
+<div class="bar-num">${item[1].Inbound}</div>
+</div>
+
+<div class="bar-row">
+<div class="bar-label">Outbound</div>
+<div class="bar-bg">
+<div class="bar-fill" style="width:${item[1].Outbound/max*100}%"></div>
+</div>
+<div class="bar-num">${item[1].Outbound}</div>
+</div>
+
+</div>`;
+    });
+
+    element.innerHTML=html;
+}
+
+
+/* =====================================================
+ SALARY MASTER
+===================================================== */
+
+function saveSalaryMaster(){
+
+    const name=
+        document.getElementById("salaryEmployee")
+        .value.trim();
+
+    const post=
+        document.getElementById("salaryPost")
+        .value.trim();
+
+    const monthSalary=
+        Number(
+            document.getElementById("salaryMonth").value
+        )||0;
+
+    const perDay=
+        Number(
+            document.getElementById("salaryDay").value
+        )||0;
+
+    const otRate=
+        Number(
+            document.getElementById("salaryOTRate").value
+        )||0;
+
+    if(!name){
+        alert("Please enter Employee Name.");
+        return;
+    }
+
+    const existing=
+        db.salaryEmployees.find(function(e){
+            return e.name.toLowerCase()===name.toLowerCase();
+        });
+
+    if(existing){
+
+        existing.post=post;
+        existing.monthSalary=monthSalary;
+        existing.perDay=perDay;
+        existing.otRate=otRate;
+
+    }else{
+
+        db.salaryEmployees.push({
+            name:name,
+            post:post,
+            monthSalary:monthSalary,
+            perDay:perDay,
+            otRate:otRate
+        });
+
+    }
+
+    saveDB();
+    renderSalaryMaster();
+    renderSalary();
+
+    document.getElementById("salaryEmployee").value="";
+    document.getElementById("salaryPost").value="";
+    document.getElementById("salaryMonth").value="";
+    document.getElementById("salaryDay").value="";
+    document.getElementById("salaryOTRate").value="";
+
+    alert("Salary employee saved.");
+}
+
+function renderSalaryMaster(){
+
+    const body=
+        document.getElementById(
+            "salaryMasterBody"
+        );
+
+    if(!db.salaryEmployees.length){
+
+        body.innerHTML=
+            "<tr><td colspan='6'>No salary employees.</td></tr>";
+
+    }else{
+
+        body.innerHTML=
+            db.salaryEmployees.map(
+                function(e,index){
+
+                    return`
+<tr>
+
+<td>${esc(e.name)}</td>
+
+<td>${esc(e.post||"")}</td>
+
+<td>${Number(e.monthSalary||0).toFixed(2)}</td>
+
+<td>${Number(e.perDay||0).toFixed(2)}</td>
+
+<td>${Number(e.otRate||0).toFixed(2)}</td>
+
+<td>
+
+<button
+class="btn btn-secondary btn-small"
+onclick="editSalary(${index})">
+Edit
+</button>
+
+<button
+class="btn btn-red btn-small"
+onclick="deleteSalary(${index})">
+Delete
+</button>
+
+</td>
+
+</tr>`;
+
+                }
+            ).join("");
+    }
+
+    setSelect(
+        "salaryOTEmployee",
+        db.salaryEmployees.map(function(e){
+            return e.name;
+        })
+    );
+}
+
+function editSalary(index){
+
+    const e=db.salaryEmployees[index];
+
+    if(!e) return;
+
+    document.getElementById("salaryEmployee").value=e.name;
+    document.getElementById("salaryPost").value=e.post||"";
+    document.getElementById("salaryMonth").value=e.monthSalary||0;
+    document.getElementById("salaryDay").value=e.perDay||0;
+    document.getElementById("salaryOTRate").value=e.otRate||0;
+
+    document.getElementById(
+        "wmsSalary"
+    ).scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+}
+
+function deleteSalary(index){
+
+    if(!confirm("Delete salary employee?")) return;
+
+    db.salaryEmployees.splice(index,1);
+
+    saveDB();
+    renderSalaryMaster();
+    renderSalary();
+}
+
+
+/* =====================================================
+ OVERTIME DATE
+===================================================== */
+
+function setDefaultOTDate(){
+
+    const input=
+        document.getElementById("salaryOTDate");
+
+    if(input && !input.value){
+
+        input.value=
+            new Date()
+            .toISOString()
+            .slice(0,10);
+    }
+}
+
+
+/* =====================================================
+ OVERTIME SAVE WITH SELECTED DATE
+===================================================== */
+
+function saveSalaryOvertime(){
+
+    const employeeName=
+        document.getElementById(
+            "salaryOTEmployee"
+        ).value;
+
+    const date=
+        document.getElementById(
+            "salaryOTDate"
+        ).value;
+
+    const hours=
+        Number(
+            document.getElementById(
+                "salaryOTHours"
+            ).value
+        )||0;
+
+    const note=
+        document.getElementById(
+            "salaryOTNote"
+        ).value.trim();
+
+
+    const employee=
+        db.salaryEmployees.find(
+            function(e){
+                return e.name===employeeName;
+            }
+        );
+
+
+    if(!employee){
+        alert(
+            "Please create/select employee in Salary Master."
+        );
+        return;
+    }
+
+
+    if(!date){
+        alert("Please select Overtime Date.");
+        return;
+    }
+
+
+    if(hours<=0){
+        alert("Please enter Overtime Hours.");
+        return;
+    }
+
+
+    const rate=
+        Number(employee.otRate||0);
+
+
+    const total=
+        hours*rate;
+
+
+    db.overtime.push({
+
+        id:
+            "OT-"+
+            Date.now()+
+            "-"+
+            Math.random()
+            .toString(36)
+            .slice(2),
+
+        date:date,
+
+        name:employee.name,
+
+        post:employee.post||"",
+
+        hours:hours,
+
+        rate:rate,
+
+        total:total,
+
+        note:note
+
+    });
+
+
+    saveDB();
+
+
+    renderOvertimeSummary();
+
+    renderSalary();
+
+    renderWMS();
+
+
+    document.getElementById(
+        "salaryOTHours"
+    ).value="";
+
+    document.getElementById(
+        "salaryOTNote"
+    ).value="";
+
+
+    alert(
+        "Overtime saved for "+
+        employee.name+
+        " on "+
+        date+
+        ". Salary Sheet updated."
+    );
+}
+
+
+/* =====================================================
+ OVERTIME SUMMARY
+===================================================== */
+
+function renderOvertimeSummary(){
+
+    const body=
+        document.getElementById(
+            "overtimeSummaryBody"
+        );
+
+    if(!db.overtime.length){
+
+        body.innerHTML=
+            "<tr><td colspan='8'>No overtime entries.</td></tr>";
+
+        return;
+    }
+
+
+    body.innerHTML=
+        db.overtime
+        .slice()
+        .sort(function(a,b){
+            return String(b.date).localeCompare(
+                String(a.date)
+            );
+        })
+        .map(function(e,index){
+
+            return`
+<tr>
+
+<td>${esc(e.date)}</td>
+
+<td>${esc(e.name)}</td>
+
+<td>${esc(e.post||"")}</td>
+
+<td>${Number(e.hours||0)}</td>
+
+<td>${Number(e.rate||0).toFixed(2)}</td>
+
+<td>${Number(e.total||0).toFixed(2)}</td>
+
+<td>${esc(e.note||"")}</td>
+
+<td>
+
+<button
+class="btn btn-secondary btn-small"
+onclick="editOvertime('${js(e.id)}')">
+Edit
+</button>
+
+<button
+class="btn btn-red btn-small"
+onclick="deleteOvertime('${js(e.id)}')">
+Delete
+</button>
+
+</td>
+
+</tr>`;
+        }).join("");
+}
+
+
+function editOvertime(id){
+
+    const item=
+        db.overtime.find(function(e){
+            return e.id===id;
+        });
+
+    if(!item) return;
+
+
+    const employeeIndex=
+        db.salaryEmployees.findIndex(
+            function(e){
+                return(
+                    e.name.toLowerCase()===
+                    String(item.name).toLowerCase()
+                );
+            }
+        );
+
+
+    if(employeeIndex>=0){
+
+        document.getElementById(
+            "salaryOTEmployee"
+        ).value=
+            db.salaryEmployees[employeeIndex].name;
+
+    }
+
+
+    document.getElementById(
+        "salaryOTDate"
+    ).value=item.date;
+
+    document.getElementById(
+        "salaryOTHours"
+    ).value=item.hours;
+
+    document.getElementById(
+        "salaryOTNote"
+    ).value=item.note||"";
+
+
+    /*
+      Delete old item before re-saving edited item.
+    */
+
+    db.overtime=db.overtime.filter(
+        function(e){
+            return e.id!==id;
+        }
+    );
+
+    saveDB();
+
+    renderOvertimeSummary();
+    renderSalary();
+
+
+    document.getElementById(
+        "salaryOTDate"
+    ).scrollIntoView({
+        behavior:"smooth",
+        block:"center"
+    });
+}
+
+
+function deleteOvertime(id){
+
+    if(!confirm(
+        "Delete this overtime entry?"
+    ))
+    return;
+
+
+    db.overtime=
+        db.overtime.filter(
+            function(e){
+                return e.id!==id;
+            }
+        );
+
+
+    saveDB();
+
+    renderOvertimeSummary();
+
+    renderSalary();
+
+    renderWMS();
+}
+
+
+function downloadOvertime(){
+
+    let csv=
+        "Date,Employee Name,Employee Post,Hours,Paid Per Hour,Total,Note\n";
+
+
+    db.overtime.forEach(
+        function(e){
+
+            csv +=
+                [
+                    e.date,
+                    e.name,
+                    e.post||"",
+                    e.hours,
+                    e.rate,
+                    e.total,
+                    e.note||""
+                ]
+                .map(csvCell)
+                .join(",")+
+                "\n";
+
+        }
+    );
+
+
+    downloadFile(
+        "HITRA_Overtime_Summary.csv",
+        csv
+    );
+}
+
+
+/* =====================================================
+ SALARY MONTH
+===================================================== */
+
+let salaryYear=
+    new Date().getFullYear();
+
+let salaryMonthIndex=
+    new Date().getMonth();
+
+
+function changeSalaryMonth(
+    offset
+){
+
+    const d=new Date(
+        salaryYear,
+        salaryMonthIndex,
+        1
+    );
+
+    d.setMonth(d.getMonth()+offset);
+
+    salaryYear=d.getFullYear();
+    salaryMonthIndex=d.getMonth();
+
+    renderSalary();
+}
+
+
+function getMonthDates(
+    year,
+    month
+){
+
+    const dates=[];
+    const lastDay=new Date(year,month+1,0).getDate();
+
+    for(let day=1;day<=lastDay;day++){
+        dates.push(
+            String(year).padStart(4,"0")+"-"+
+            String(month+1).padStart(2,"0")+"-"+
+            String(day).padStart(2,"0")
+        );
+    }
+
+    return dates;
+}
+
+/* =====================================================
+ ATTENDANCE
+===================================================== */
+
+function attendanceKey(
+    name,
+    date
+){
+
+    return(
+        String(name).toLowerCase()+
+        "__"+
+        date
+    );
+}
+
+
+function getAttendance(
+    name,
+    date
+){
+
+    return(
+        db.attendance[
+            attendanceKey(
+                name,
+                date
+            )
+        ]||
+        "Present"
+    );
+}
+
+
+function setAttendance(
+    name,
+    date,
+    status
+){
+
+    db.attendance[
+        attendanceKey(
+            name,
+            date
+        )
+    ]=status;
+
+    saveDB();
+
+    renderSalary();
+}
+
+
+/* =====================================================
+ OVERTIME BY EXACT EMPLOYEE + EXACT DATE
+===================================================== */
+
+function getOvertimePay(
+    name,
+    date
+){
+
+    return db.overtime
+        .filter(
+            function(item){
+
+                return(
+                    String(item.name).toLowerCase()===
+                    String(name).toLowerCase()
+                    &&
+                    item.date===date
+                );
+
+            }
+        )
+        .reduce(
+            function(sum,item){
+
+                return(
+                    sum+
+                    Number(item.total||0)
+                );
+
+            },
+            0
+        );
+}
+
+
+/* =====================================================
+ SALARY CALCULATION
+===================================================== */
+
+function calculateSalary(
+    employee
+){
+
+    const dates=getMonthDates(salaryYear,salaryMonthIndex);
+
+    let present=0;
+    let halfDay=0;
+    let absent=0;
+    let leave=0;
+    let cut=0;
+    let overtime=0;
+
+    dates.forEach(function(date){
+
+        const status=getAttendance(employee.name,date);
+
+        if(status==="Present") present++;
+
+        if(status==="Half Day"){
+            halfDay++;
+            cut += Number(employee.perDay||0) * 0.5;
+        }
+
+        if(status==="Absent"){
+            absent++;
+            cut += Number(employee.perDay||0);
+        }
+
+        if(status==="Paid Leave" || status==="Medical Leave") leave++;
+
+        overtime += getOvertimePay(employee.name,date);
+    });
+
+    /*
+      Salary rule:
+      - Month Salary is the employee's fixed monthly salary.
+      - Do NOT replace it with a calculated/"Real Salary".
+      - Absent = deduct one Per Day Salary.
+      - Half Day = deduct 0.5 Per Day Salary.
+      - Paid Leave / Medical Leave = no salary cut.
+      - Overtime is added to the salary.
+      - Total Salary = Month Salary - Cut Salary + Overtime Pay.
+    */
+    const monthSalary=Number(employee.monthSalary||0);
+    const totalSalary=monthSalary-cut+overtime;
+
+    return{
+        present:present,
+        halfDay:halfDay,
+        absent:absent,
+        leave:leave,
+        monthSalary:monthSalary,
+        cut:cut,
+        overtime:overtime,
+        totalSalary:totalSalary
+    };
+}
+
+/* =====================================================
+ SALARY SHEET
+===================================================== */
+
+function renderSalary(){
+
+    const search=
+        (
+            document.getElementById(
+                "salarySearch"
+            )?.value||
+            ""
+        )
+        .toLowerCase();
+
+
+    const employees=
+        db.salaryEmployees
+        .filter(
+            function(e){
+
+                return e.name
+                    .toLowerCase()
+                    .includes(search);
+
+            }
+        );
+
+
+    const dates=
+        getMonthDates(
+            salaryYear,
+            salaryMonthIndex
+        );
+
+
+    const monthName=
+        new Date(
+            salaryYear,
+            salaryMonthIndex,
+            1
+        ).toLocaleString(
+            "en-US",
+            {
+                month:"long",
+                year:"numeric"
+            }
+        );
+
+
+    document.getElementById(
+        "salaryMonthTitle"
+    ).textContent=
+        "Salary Month: "+monthName;
+
+
+    const head=
+        document.getElementById(
+            "salaryHead"
+        );
+
+    const body=
+        document.getElementById(
+            "salaryBody"
+        );
+
+    const summary=
+        document.getElementById(
+            "salarySummary"
+        );
+
+
+    head.innerHTML=
+        `
+
+<tr>
+
+<th>
+Employee Name
+</th>
+
+<th>
+Employee Post
+</th>
+
+${
+    dates.map(
+        function(date){
+
+            const d=
+                new Date(
+                    date+"T00:00:00"
+                );
+
+            return`
+<th>
+${d.getDate()}
+</th>`;
+
+        }
+    ).join("")
+}
+
+<th>
+Month Salary
+</th>
+
+<th>
+Per Day Salary
+</th>
+
+<th>
+OT Pay / Hour
+</th>
+
+<th>
+Cut Salary
+</th>
+
+<th>
+Overtime Pay
+</th>
+
+<th>
+Total Salary
+</th>
+
+</tr>
+`;
+
+
+    if(!employees.length){
+
+        body.innerHTML=
+            "<tr><td colspan='50'>No employees found.</td></tr>";
+
+        summary.innerHTML=
+            "<tr><td colspan='8'>No salary data.</td></tr>";
+
+        return;
+    }
+
+
+    body.innerHTML=
+        employees.map(
+            function(employee){
+
+                const calc=
+                    calculateSalary(
+                        employee
+                    );
+
+
+                return`
+
+<tr>
+
+<td>
+<b>
+${esc(employee.name)}
+</b>
+</td>
+
+<td>
+${esc(employee.post||"")}
+</td>
+
+
+${
+    dates.map(
+        function(date){
+
+            const status=
+                getAttendance(
+                    employee.name,
+                    date
+                );
+
+
+            const dailyOT=
+                getOvertimePay(
+                    employee.name,
+                    date
+                );
+
+
+            let cls=
+                "cell-p";
+
+
+            if(status==="Absent"){
+                cls="cell-a";
+            }
+
+
+            if(
+                status==="Paid Leave"||
+                status==="Medical Leave"
+            ){
+                cls="cell-l";
+            }
+
+
+            if(status==="Half Day"){
+                cls="cell-h";
+            }
+
+
+            return`
+
+<td class="${cls}">
+
+<div>
+${attendanceShort(status)}
+</div>
+
+
+${
+    dailyOT>0
+    ?
+`
+<div style="
+font-size:9px;
+color:#087fbe;
+margin-top:3px">
+
+OT +${dailyOT.toFixed(2)}
+
+</div>
+`
+    :
+""
+}
+
+
+<div>
+
+<button
+class="att att-p"
+title="Present"
+onclick="setAttendance(
+'${js(employee.name)}',
+'${date}',
+'Present'
+)">
+P
+</button>
+
+
+<button
+class="att att-h"
+title="Half Day"
+onclick="setAttendance(
+'${js(employee.name)}',
+'${date}',
+'Half Day'
+)">
+HD
+</button>
+
+
+<button
+class="att att-a"
+title="Absent"
+onclick="setAttendance(
+'${js(employee.name)}',
+'${date}',
+'Absent'
+)">
+A
+</button>
+
+
+<button
+class="att att-l"
+title="Paid Leave"
+onclick="setAttendance(
+'${js(employee.name)}',
+'${date}',
+'Paid Leave'
+)">
+PL
+</button>
+
+
+<button
+class="att att-l"
+title="Medical Leave"
+onclick="setAttendance(
+'${js(employee.name)}',
+'${date}',
+'Medical Leave'
+)">
+ML
+</button>
+
+</div>
+
+</td>
+
+`;
+
+        }
+    ).join("")
+}
+
+
+<td>
+${Number(employee.monthSalary||0).toFixed(2)}
+</td>
+
+<td>
+${Number(employee.perDay||0).toFixed(2)}
+</td>
+
+<td>
+${Number(employee.otRate||0).toFixed(2)}
+</td>
+
+<td>
+${calc.cut.toFixed(2)}
+</td>
+
+<td>
+${calc.overtime.toFixed(2)}
+</td>
+
+<td>
+<b>
+${calc.totalSalary.toFixed(2)}
+</b>
+</td>
+
+</tr>
+
+`;
+            }
+        ).join("");
+
+
+    summary.innerHTML=
+        employees.map(
+            function(employee){
+
+                const calc=
+                    calculateSalary(
+                        employee
+                    );
+
+
+                return`
+
+<tr>
+
+<td>
+${esc(employee.name)}
+</td>
+
+<td>
+${esc(employee.post||"")}
+</td>
+
+<td>
+${Number(
+employee.monthSalary||0
+).toFixed(2)}
+</td>
+
+<td>
+${calc.cut.toFixed(2)}
+</td>
+
+<td>
+${calc.overtime.toFixed(2)}
+</td>
+
+<td>
+<b>
+${calc.totalSalary.toFixed(2)}
+</b>
+</td>
+
+<td>
+
+<button
+class="btn btn-secondary btn-small"
+onclick="editSalaryByName('${js(employee.name)}')">
+
+Edit
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+            }
+        ).join("");
+}
+
+
+function editSalaryByName(name){
+
+    const index=
+        db.salaryEmployees.findIndex(
+            function(e){
+                return(
+                    e.name.toLowerCase()===
+                    String(name).toLowerCase()
+                );
+            }
+        );
+
+    if(index>=0){
+
+        editSalary(index);
+
+        document.getElementById(
+            "salaryEmployee"
+        ).scrollIntoView({
+            behavior:"smooth",
+            block:"center"
+        });
+    }
+}
+
+
+function attendanceShort(status){
+
+    if(status==="Present") return"P";
+    if(status==="Absent") return"A";
+    if(status==="Half Day") return"HD";
+    if(status==="Paid Leave") return"PL";
+    if(status==="Medical Leave") return"ML";
+
+    return status;
+}
+
+
+/* =====================================================
+ SALARY DOWNLOAD
+===================================================== */
+
+function downloadSalary(){
+
+    const dates=getMonthDates(salaryYear,salaryMonthIndex);
+    const monthName=new Date(salaryYear,salaryMonthIndex,1).toLocaleString("en-US",{month:"long",year:"numeric"});
+
+    let html=`<html><head><meta charset="UTF-8"></head><body>`;
+    html+=`<h2>HITRA Salary Sheet - ${esc(monthName)}</h2>`;
+    html+=`<table border="1"><tr><th>Employee Name</th><th>Employee Post</th>`;
+
+    dates.forEach(function(date){
+        const d=new Date(date+"T00:00:00");
+        html+=`<th>${d.getDate()}</th>`;
+    });
+
+    html+=`<th>Month Salary</th><th>Per Day Salary</th><th>OT Pay/Hour</th><th>Cut Salary</th><th>Overtime Pay</th><th>Total Salary</th></tr>`;
+
+    db.salaryEmployees.forEach(function(employee){
+        const calc=calculateSalary(employee);
+        html+=`<tr><td>${esc(employee.name)}</td><td>${esc(employee.post||"")}</td>`;
+
+        dates.forEach(function(date){
+            const status=getAttendance(employee.name,date);
+            const dailyOT=getOvertimePay(employee.name,date);
+            html+=`<td>${esc(attendanceShort(status))}${dailyOT>0?` (OT +${dailyOT.toFixed(2)})`:``}</td>`;
+        });
+
+        html+=`<td>${Number(employee.monthSalary||0).toFixed(2)}</td><td>${Number(employee.perDay||0).toFixed(2)}</td><td>${Number(employee.otRate||0).toFixed(2)}</td><td>${calc.cut.toFixed(2)}</td><td>${calc.overtime.toFixed(2)}</td><td>${calc.totalSalary.toFixed(2)}</td></tr>`;
+    });
+
+    html+=`</table><br><h3>Salary Summary</h3><table border="1"><tr><th>Employee Name</th><th>Employee Post</th><th>Month Salary</th><th>Cut Salary</th><th>Overtime Pay</th><th>Total Salary</th></tr>`;
+
+    db.salaryEmployees.forEach(function(employee){
+        const calc=calculateSalary(employee);
+        html+=`<tr><td>${esc(employee.name)}</td><td>${esc(employee.post||"")}</td><td>${Number(employee.monthSalary||0).toFixed(2)}</td><td>${calc.cut.toFixed(2)}</td><td>${calc.overtime.toFixed(2)}</td><td>${calc.totalSalary.toFixed(2)}</td></tr>`;
+    });
+
+    html+=`</table></body></html>`;
+
+    const blob=new Blob(["\ufeff"+html],{type:"application/vnd.ms-excel;charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download=`HITRA_Salary_${salaryYear}_${String(salaryMonthIndex+1).padStart(2,"0")}.xls`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+}
+
+/* =====================================================
+ UTILITY
+===================================================== */
+
+function downloadFile(
+    filename,
+    data
+){
+
+    const blob=
+        new Blob(
+            ["\ufeff"+data],
+            {
+                type:"text/csv;charset=utf-8"
+            }
+        );
+
+
+    const url=
+        URL.createObjectURL(blob);
+
+
+    const link=
+        document.createElement("a");
+
+
+    link.href=url;
+    link.download=filename;
+
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    URL.revokeObjectURL(url);
+}
+
+
+function csvCell(value){
+
+    return(
+        '"'+
+        String(value??"")
+        .replace(/"/g,'""')+
+        '"'
+    );
+}
+
+
+function statusHTML(status){
+
+    const cls=
+        status==="Complete"
+        ?"status-complete"
+        :
+        status==="Running"
+        ?"status-running"
+        :
+        "status-pending";
+
+
+    return`
+<span class="status ${cls}">
+${esc(status)}
+</span>`;
+}
+
+
+function esc(value){
+
+    return String(
+        value??""
+    )
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+
+function escAttr(value){
+    return esc(value);
+}
+
+
+function js(value){
+
+    return String(
+        value??""
+    )
+    .replace(/\\/g,"\\\\")
+    .replace(/'/g,"\\'");
+}
+
+
+/* =====================================================
+ START
+===================================================== */
+
+renderMasters();
+initFirebaseCloud();
+
+</script>
+</body>
+</html>
